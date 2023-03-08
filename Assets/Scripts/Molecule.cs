@@ -3,21 +3,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Despawner : MonoBehaviour
+public class Molecule : MonoBehaviour
 {
 
     public float _DespawnWaitTime = 5;
+    [HideInInspector] public bool _WasReleasedByPlayer;
 
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log("Starting despawn counter...");
-        StartCoroutine(DespawnThis());    
+        StartCoroutine(DespawnThis());
+        _WasReleasedByPlayer = false;
     }
 
     IEnumerator DespawnThis()
     {
         yield return new WaitForSeconds(_DespawnWaitTime);
         Destroy(gameObject);
+    }
+
+    public void UpdateRelease(bool WasReleased)
+    {
+        _WasReleasedByPlayer = WasReleased;
     }
 }

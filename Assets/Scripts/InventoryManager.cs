@@ -12,7 +12,7 @@ public class InventoryManager : MonoBehaviour
     {
         _count = 1;
     }
-    public void Test(SelectEnterEventArgs args)
+    public void SpawnInteractable(SelectEnterEventArgs args)
     {
         if (_count > 0) { 
             XRInteractionManager XRIM = FindAnyObjectByType<XRInteractionManager>();
@@ -21,4 +21,19 @@ public class InventoryManager : MonoBehaviour
             _count -= 1;
         }
     }
+
+    public void OnCollisionEnter(Collision collision)
+    {
+        Molecule molecule = collision.gameObject.GetComponent<Molecule>();
+        if (molecule != null)
+        {
+            if (molecule._WasReleasedByPlayer)
+            {
+                _count += 1;
+                Destroy(collision.gameObject);
+            }
+        }
+    }
+
+
 }
