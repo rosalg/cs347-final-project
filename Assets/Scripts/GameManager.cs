@@ -7,12 +7,16 @@ public class GameManager : MonoBehaviour
     public GameObject[] CO2SpawnLocations;
     public GameObject[] O2SpawnLocations;
     [HideInInspector] public bool _playerInLung;
+    [HideInInspector] public bool _playerInExt;
     public GameObject CO2;
     public GameObject O2;
+    public float _O2SpawnTime;
+    public float _CO2SpawnTime;
 
     public static GameManager instance;
 
-    private Coroutine _runningCoroutine;
+    private Coroutine _runningO2Coroutine;
+    private Coroutine _runningCO2Coroutine;
     private float _speed = 3;
 
     private void Awake()
@@ -25,21 +29,34 @@ public class GameManager : MonoBehaviour
             instance = this;
         }
 
-        _playerInLung = true;
-        _runningCoroutine = null;
+        _playerInLung = false;
+        _playerInExt = false;
+        _runningO2Coroutine = null;
+        _runningCO2Coroutine = null;
     }
 
     private void Update()
     {
-        if (_playerInLung && _runningCoroutine == null)
+        if (_playerInLung && _runningO2Coroutine == null)
         {
-            _runningCoroutine = StartCoroutine(SpawnO2());
+            _runningO2Coroutine = StartCoroutine(SpawnO2());
         }
 
-        if (!_playerInLung && _runningCoroutine != null)
+        if (!_playerInLung && _runningO2Coroutine != null)
         {
-            StopCoroutine(_runningCoroutine);
-            _runningCoroutine = null;
+            StopCoroutine(_runningO2Coroutine);
+            _runningO2Coroutine = null;
+        }
+
+        if (_playerInExt && _runningCO2Coroutine == null)
+        {
+            _runningCO2Coroutine = StartCoroutine(SpawnCO2());
+        }
+
+        if (!_playerInExt && _runningCO2Coroutine != null)
+        {
+            StopCoroutine(_runningCO2Coroutine);
+            _runningCO2Coroutine = null;
         }
     }
 
@@ -48,8 +65,20 @@ public class GameManager : MonoBehaviour
         while (true)
         {
             GameObject newO2 = Instantiate(O2);
+            newO2.transform.position = O2SpawnLocations[0].transform.position;
             newO2.GetComponent<Rigidbody>().velocity = new Vector3(Random.value * _speed, -Random.value, Random.value * _speed);
-            yield return new WaitForSeconds(10);
+            yield return new WaitForSeconds(_O2SpawnTime);
+        }
+    }
+
+    IEnumerator SpawnCO2()
+    {
+        while (true)
+        {
+            GameObject newCO2 = Instantiate(CO2);
+            newCO2.transform.position = CO2SpawnLocations[0].transform.position;
+            newCO2.GetComponent<Rigidbody>().velocity = new Vector3(Random.value * _speed, -Random.value, Random.value * _speed);
+            yield return new WaitForSeconds(_CO2SpawnTime);
         }
     }
 }
