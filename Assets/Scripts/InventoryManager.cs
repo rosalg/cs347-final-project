@@ -7,10 +7,11 @@ public class InventoryManager : MonoBehaviour
 {
     public GameObject _ToInstantiate;
     private int _count;
+    public bool _IsO2Inv;
 
     private void Start()
     {
-        _count = 1;
+        _count = 0;
     }
     public void SpawnInteractable(SelectEnterEventArgs args)
     {
@@ -25,9 +26,9 @@ public class InventoryManager : MonoBehaviour
     public void OnCollisionEnter(Collision collision)
     {
         Molecule molecule = collision.gameObject.GetComponent<Molecule>();
-        if (molecule != null)
+        if (molecule != null && ((molecule._IsO2 && _IsO2Inv) || (!molecule._IsO2 && !_IsO2Inv)))
         {
-            if (molecule._WasReleasedByPlayer)
+            if (molecule._WasReleasedByPlayer && _count < 10)
             {
                 _count += 1;
                 Destroy(collision.gameObject);

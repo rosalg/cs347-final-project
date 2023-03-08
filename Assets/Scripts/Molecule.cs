@@ -8,6 +8,7 @@ public class Molecule : MonoBehaviour
 
     public float _DespawnWaitTime = 5;
     [HideInInspector] public bool _WasReleasedByPlayer;
+    public bool _IsO2;
 
     // Start is called before the first frame update
     void Start()
