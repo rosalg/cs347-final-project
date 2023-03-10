@@ -354,7 +354,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: O2
+  m_text: 'O2: 0'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -459,7 +459,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 158378378}
   m_LocalRotation: {x: 0.8815508, y: -0.47208917, z: 0, w: 0}
-  m_LocalPosition: {x: 0.82, y: 0.91, z: 0.221}
+  m_LocalPosition: {x: 0.671, y: 0.721, z: 0.221}
   m_LocalScale: {x: 0.0980248, y: 0.05429789, z: 0.035431232}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -560,17 +560,17 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 399fcab844027a04787250cfec57e283,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 3
+      value: 4.91
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 399fcab844027a04787250cfec57e283,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 1.5789474
+      value: 2.5842106
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 399fcab844027a04787250cfec57e283,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 4.5157895
+      value: 7.390842
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 399fcab844027a04787250cfec57e283,
         type: 3}
@@ -863,6 +863,13 @@ MonoBehaviour:
   isInfiniteTap: 0
   startingInventorySize: 0
   maxInventorySize: 10
+  UIElement: {fileID: 267367246}
+  OnNewItemSpawned:
+    m_PersistentCalls:
+      m_Calls: []
+  OnNewItemDrained:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &255280216 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 399fcab844027a04787250cfec57e283,
@@ -947,7 +954,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: CO2
+  m_text: 'CO2: 0'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1326,7 +1333,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 665287113}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.8354}
+  m_LocalPosition: {x: 0, y: 0, z: 0.788}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1589,7 +1596,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 718031420}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0, z: 0.8658}
+  m_LocalPosition: {x: 0, y: -0, z: -0.717}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1616,6 +1623,13 @@ MonoBehaviour:
   isInfiniteTap: 0
   startingInventorySize: 0
   maxInventorySize: 0
+  UIElement: {fileID: 0}
+  OnNewItemSpawned:
+    m_PersistentCalls:
+      m_Calls: []
+  OnNewItemDrained:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!65 &718031423
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1851,8 +1865,15 @@ MonoBehaviour:
   isTap: 1
   isInfiniteDrain: 0
   isInfiniteTap: 0
-  startingInventorySize: 0
+  startingInventorySize: 1
   maxInventorySize: 10
+  UIElement: {fileID: 74375494}
+  OnNewItemSpawned:
+    m_PersistentCalls:
+      m_Calls: []
+  OnNewItemDrained:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1001 &1096820654
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2081,7 +2102,7 @@ GameObject:
   - component: {fileID: 1148445494}
   - component: {fileID: 1148445493}
   m_Layer: 0
-  m_Name: O2InventoryIndicator (1)
+  m_Name: CO2InventoryIndicator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2816,8 +2837,8 @@ MonoBehaviour:
   - {fileID: 665287113}
   CO2: {fileID: 3051450584179575786, guid: 80f818ce46fcdaa41b11bac6cb02d606, type: 3}
   O2: {fileID: 3051450584179575786, guid: d8ab2f5504ea44a4d8ae6dfe77b22739, type: 3}
-  _O2SpawnTime: 2.5
-  _CO2SpawnTime: 2.5
+  O2SpawnTime: 2.5
+  CO2SpawnTime: 2.5
   _playerInLung: 0
   _playerInExt: 0
 --- !u!4 &1556410886
@@ -4262,7 +4283,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1904037421}
   m_LocalRotation: {x: 0.5040806, y: 0.49588585, z: 0.49588585, w: 0.50408053}
-  m_LocalPosition: {x: -0.78074276, y: -0.07981097, z: 0}
+  m_LocalPosition: {x: -1.084, y: -0.04, z: 0}
   m_LocalScale: {x: 5.7266817, y: 3.458724, z: 0.6928739}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -4289,6 +4310,13 @@ MonoBehaviour:
   isInfiniteTap: 0
   startingInventorySize: 0
   maxInventorySize: 0
+  UIElement: {fileID: 0}
+  OnNewItemSpawned:
+    m_PersistentCalls:
+      m_Calls: []
+  OnNewItemDrained:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!65 &1904037424
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4317,17 +4345,17 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: d68f46302bd9d454cb874ecb3c4e5595,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 3.4895706
+      value: 3.86
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d68f46302bd9d454cb874ecb3c4e5595,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 3.4895701
+      value: 3.86
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d68f46302bd9d454cb874ecb3c4e5595,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 3.4895706
+      value: 3.86
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d68f46302bd9d454cb874ecb3c4e5595,
         type: 3}
@@ -4428,7 +4456,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_System: {fileID: 0}
-  m_TurnSpeed: 60
+  m_TurnSpeed: 90
   m_LeftHandTurnAction:
     m_UseReference: 0
     m_Action:
@@ -4468,7 +4496,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_System: {fileID: 0}
-  m_MoveSpeed: 2
+  m_MoveSpeed: 4
   m_EnableStrafe: 1
   m_EnableFly: 1
   m_UseGravity: 0

@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.Events;
+using TMPro;
 
 public class InventoryManager : MonoBehaviour, ITap, IDrain
 {
@@ -13,14 +15,24 @@ public class InventoryManager : MonoBehaviour, ITap, IDrain
     public bool isInfiniteTap;
     public int startingInventorySize = 0;
     public int maxInventorySize;
+    public TMP_Text UIElement;
+    public UnityEvent OnNewItemSpawned;
+    public UnityEvent OnNewItemDrained;
 
     private int _count;
 
     private void Start()
     {
+        if (UIElement != null)
+        {
+            OnNewItemSpawned.AddListener(UpdateUIElement);
+            OnNewItemDrained.AddListener(UpdateUIElement);
+        }
         _count = startingInventorySize;
+        UIElement.text = inventoryType.name + ": " + _count;
     }
 
+    // Add an invocation to say hey a new thing was spawned from the player's inventory.
     public void SpawnInteractable(SelectEnterEventArgs args)
     {
         if (!isTap)
@@ -35,6 +47,7 @@ public class InventoryManager : MonoBehaviour, ITap, IDrain
             {
                 _count -= 1;
             }
+            OnNewItemSpawned?.Invoke();
         }
     }
 
@@ -43,6 +56,8 @@ public class InventoryManager : MonoBehaviour, ITap, IDrain
         DrainItem(collision);
     }
 
+
+    // Add an invocation to say hey a new thing was put into the player's inventory.
     public void DrainItem(Collision collision)
     {
         if (!isDrain)
@@ -59,8 +74,14 @@ public class InventoryManager : MonoBehaviour, ITap, IDrain
                     _count += 1;
                 }
                 Destroy(collision.gameObject);
+                OnNewItemDrained?.Invoke();
             }
         }
+    }
+
+    public void UpdateUIElement()
+    {
+        UIElement.text = inventoryType.name + ": " + _count.ToString();    
     }
 
 }

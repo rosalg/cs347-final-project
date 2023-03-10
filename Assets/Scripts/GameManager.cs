@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class GameManager : MonoBehaviour
 {
@@ -8,8 +9,8 @@ public class GameManager : MonoBehaviour
     public GameObject[] O2SpawnLocations;
     public GameObject CO2;
     public GameObject O2;
-    public float _O2SpawnTime;
-    public float _CO2SpawnTime;
+    public float O2SpawnTime;
+    public float CO2SpawnTime;
 
     [HideInInspector] public bool _playerInLung;
     [HideInInspector] public bool _playerInExt;
@@ -40,7 +41,7 @@ public class GameManager : MonoBehaviour
     {
         if (_playerInLung && _runningO2Coroutine == null)
         {
-            _runningO2Coroutine = StartCoroutine(SpawnMolecule(O2, _O2SpawnTime));
+            _runningO2Coroutine = StartCoroutine(SpawnMolecule(O2, O2SpawnTime, O2SpawnLocations[0]));
         }
 
         if (!_playerInLung && _runningO2Coroutine != null)
@@ -51,7 +52,7 @@ public class GameManager : MonoBehaviour
 
         if (_playerInExt && _runningCO2Coroutine == null)
         {
-            _runningCO2Coroutine = StartCoroutine(SpawnMolecule(CO2, _CO2SpawnTime));
+            _runningCO2Coroutine = StartCoroutine(SpawnMolecule(CO2, CO2SpawnTime, CO2SpawnLocations[0]));
         }
 
         if (!_playerInExt && _runningCO2Coroutine != null)
@@ -61,13 +62,13 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    IEnumerator SpawnMolecule(GameObject moleculeToSpawn, float spawnTime)
+    IEnumerator SpawnMolecule(GameObject moleculeToSpawn, float spawnTime, GameObject spawnPosition)
     {
         while (true)
         {
-            GameObject newO2 = Instantiate(moleculeToSpawn);
-            newO2.transform.position = O2SpawnLocations[0].transform.position;
-            newO2.GetComponent<Rigidbody>().velocity = new Vector3(Random.value * _speed, -Random.value, Random.value * _speed);
+            GameObject newMolecule = Instantiate(moleculeToSpawn);
+            newMolecule.transform.position = spawnPosition.transform.position;
+            newMolecule.GetComponent<Rigidbody>().velocity = new Vector3(Random.value * _speed, -Random.value, Random.value * _speed);
             yield return new WaitForSeconds(spawnTime);
         }
     }
