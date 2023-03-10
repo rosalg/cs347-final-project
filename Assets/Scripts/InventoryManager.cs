@@ -3,38 +3,64 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
-public class InventoryManager : MonoBehaviour
+public class InventoryManager : MonoBehaviour, ITap, IDrain
 {
-    public GameObject _ToInstantiate;
+
+    public GameObject inventoryType;
+    public bool isDrain;
+    public bool isTap;
+    public bool isInfiniteDrain;
+    public bool isInfiniteTap;
+    public int startingInventorySize = 0;
+    public int maxInventorySize;
+
     private int _count;
-    public bool _IsO2Inv;
 
     private void Start()
     {
-        _count = 0;
+        _count = startingInventorySize;
     }
+
     public void SpawnInteractable(SelectEnterEventArgs args)
     {
-        if (_count > 0) { 
+        if (!isTap)
+            return;
+
+        if (_count > 0 || isInfiniteTap)
+        {
             XRInteractionManager XRIM = FindAnyObjectByType<XRInteractionManager>();
-            GameObject Interactable = Instantiate(_ToInstantiate);
+            GameObject Interactable = Instantiate(inventoryType);
             XRIM.SelectEnter(args.interactorObject, Interactable.GetComponent<XRGrabInteractable>());
-            _count -= 1;
+            if (!isInfiniteTap)
+            {
+                _count -= 1;
+            }
         }
     }
 
     public void OnCollisionEnter(Collision collision)
     {
+        DrainItem(collision);
+    }
+
+    public void DrainItem(Collision collision)
+    {
+        if (!isDrain)
+            return;
+
+
         Molecule molecule = collision.gameObject.GetComponent<Molecule>();
-        if (molecule != null && ((molecule._IsO2 && _IsO2Inv) || (!molecule._IsO2 && !_IsO2Inv)))
+        if (molecule != null && molecule.element == inventoryType.GetComponent<Molecule>().element)
         {
-            if (molecule._WasReleasedByPlayer && _count < 10)
+            if (molecule.wasReleasedByPlayer && (_count < maxInventorySize || isInfiniteDrain))
             {
-                _count += 1;
+                if (!isInfiniteDrain)
+                {
+                    _count += 1;
+                }
                 Destroy(collision.gameObject);
             }
         }
     }
-
 
 }

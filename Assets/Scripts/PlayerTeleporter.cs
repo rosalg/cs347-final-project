@@ -5,16 +5,16 @@ using UnityEngine.Experimental.XR.Interaction;
 
 public class PlayerTeleporter : MonoBehaviour
 {
-    public GameObject _LocationToTeleport;
-    public bool _GoingToLung;
-    public bool _GoingToExt;
+    public GameObject locationToTeleport;
+    public bool goingToLung;
+    public bool goingToExt;
 
     void OnTriggerEnter()
     {
         GameObject player = GameObject.Find("XROrigin");
-        player.gameObject.transform.position = _LocationToTeleport.transform.position;
+        player.gameObject.transform.position = locationToTeleport.transform.position;
 
-        if (_GoingToLung)
+        if (goingToLung)
         {
             GameManager.instance._playerInLung = true;
         } else
@@ -22,7 +22,7 @@ public class PlayerTeleporter : MonoBehaviour
             GameManager.instance._playerInLung = false;
         }
         
-        if (_GoingToExt)
+        if (goingToExt)
         {
             GameManager.instance._playerInExt = true;
         } else

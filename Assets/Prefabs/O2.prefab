@@ -249,9 +249,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e58c08ebcc2f84d489d3b86205ee3f4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _DespawnWaitTime: 10
-  _WasReleasedByPlayer: 0
-  _IsO2: 1
+  despawnWaitTime: 10
+  element: 0
+  wasReleasedByPlayer: 0
 --- !u!1 &4945577068742052481
 GameObject:
   m_ObjectHideFlags: 0

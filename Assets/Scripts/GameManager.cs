@@ -6,12 +6,13 @@ public class GameManager : MonoBehaviour
 {
     public GameObject[] CO2SpawnLocations;
     public GameObject[] O2SpawnLocations;
-    [HideInInspector] public bool _playerInLung;
-    [HideInInspector] public bool _playerInExt;
     public GameObject CO2;
     public GameObject O2;
     public float _O2SpawnTime;
     public float _CO2SpawnTime;
+
+    [HideInInspector] public bool _playerInLung;
+    [HideInInspector] public bool _playerInExt;
 
     public static GameManager instance;
 
@@ -39,7 +40,7 @@ public class GameManager : MonoBehaviour
     {
         if (_playerInLung && _runningO2Coroutine == null)
         {
-            _runningO2Coroutine = StartCoroutine(SpawnO2());
+            _runningO2Coroutine = StartCoroutine(SpawnMolecule(O2, _O2SpawnTime));
         }
 
         if (!_playerInLung && _runningO2Coroutine != null)
@@ -50,7 +51,7 @@ public class GameManager : MonoBehaviour
 
         if (_playerInExt && _runningCO2Coroutine == null)
         {
-            _runningCO2Coroutine = StartCoroutine(SpawnCO2());
+            _runningCO2Coroutine = StartCoroutine(SpawnMolecule(CO2, _CO2SpawnTime));
         }
 
         if (!_playerInExt && _runningCO2Coroutine != null)
@@ -60,25 +61,15 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    IEnumerator SpawnO2()
+    IEnumerator SpawnMolecule(GameObject moleculeToSpawn, float spawnTime)
     {
         while (true)
         {
-            GameObject newO2 = Instantiate(O2);
+            GameObject newO2 = Instantiate(moleculeToSpawn);
             newO2.transform.position = O2SpawnLocations[0].transform.position;
             newO2.GetComponent<Rigidbody>().velocity = new Vector3(Random.value * _speed, -Random.value, Random.value * _speed);
-            yield return new WaitForSeconds(_O2SpawnTime);
+            yield return new WaitForSeconds(spawnTime);
         }
     }
 
-    IEnumerator SpawnCO2()
-    {
-        while (true)
-        {
-            GameObject newCO2 = Instantiate(CO2);
-            newCO2.transform.position = CO2SpawnLocations[0].transform.position;
-            newCO2.GetComponent<Rigidbody>().velocity = new Vector3(Random.value * _speed, -Random.value, Random.value * _speed);
-            yield return new WaitForSeconds(_CO2SpawnTime);
-        }
-    }
 }

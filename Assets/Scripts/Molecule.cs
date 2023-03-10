@@ -5,26 +5,34 @@ using UnityEngine;
 
 public class Molecule : MonoBehaviour
 {
+    public enum Element
+    {
+        O2,
+        CO2
+    };
 
-    public float _DespawnWaitTime = 5;
-    [HideInInspector] public bool _WasReleasedByPlayer;
-    public bool _IsO2;
+    public float despawnWaitTime = 5;
+    public Element element;
+
+    [HideInInspector] public bool wasReleasedByPlayer;
+
 
     // Start is called before the first frame update
     void Start()
     {
         StartCoroutine(DespawnThis());
-        _WasReleasedByPlayer = false;
+        wasReleasedByPlayer = false;
     }
 
     IEnumerator DespawnThis()
     {
-        yield return new WaitForSeconds(_DespawnWaitTime);
+        yield return new WaitForSeconds(despawnWaitTime);
         Destroy(gameObject);
     }
 
     public void UpdateRelease(bool WasReleased)
     {
-        _WasReleasedByPlayer = WasReleased;
+        wasReleasedByPlayer = WasReleased;
     }
+
 }
