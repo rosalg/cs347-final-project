@@ -26,6 +26,8 @@ public class GameManager : MonoBehaviour
     public float O2SpawnTime;
     public float CO2SpawnTime;
     public InputActionAsset actions;
+    public int O2Needed = 10;
+    public int CO2Needed = 10;
 
     [HideInInspector] public bool _playerInLung;
     [HideInInspector] public bool _playerInExt;
@@ -70,7 +72,13 @@ public class GameManager : MonoBehaviour
 
     public void UpdateStage(string newTaskText)
     {
-        _currStage = (Stage) ((int) _currStage + 1);
+        if (_currStage == Stage.ReleaseCarbonDioxide)
+        {
+            _currStage = Stage.TravelToLungs;
+        } else
+        {
+            _currStage = (Stage)((int)_currStage + 1);
+        }
         _TaskText.text = newTaskText;
     }
 
@@ -98,7 +106,7 @@ public class GameManager : MonoBehaviour
         _runningCoroutine = StartCoroutine(SpawnMolecule(CO2, CO2SpawnTime, CO2SpawnLocations[0]));
         if (_currStage == Stage.TravelToExtremity)
         {
-            UpdateStage("Collect 10 carbon dioxide molecules.");
+            UpdateStage("Release oxygen to keep the extremity alive.");
         }
     }
 
@@ -107,6 +115,38 @@ public class GameManager : MonoBehaviour
         StopCoroutine(_runningCoroutine);
     }
 
-    [System.Serializable]
-    public class UnityIntEvent : UnityEvent<int> { }
+    public void HandleInventoryUpdate(GameObject inv)
+    {
+
+        InventoryManager inventoryObject = inv.GetComponent<InventoryManager>();
+        if (inv.name == "O2Inv")
+        {
+            if (_currStage == Stage.OxygenCollection && inventoryObject.IsFull())
+            {
+                UpdateStage("Travel to any extremity");
+            }
+        }
+        if (inv.name == "CO2Inv")
+        {
+            if (_currStage == Stage.CollectCarbonDioxide && inventoryObject.IsFull())
+            {
+                UpdateStage("Return to the lungs.");
+            }
+        }
+        if (inv.name == "O2Sink")
+        {
+            if (_currStage == Stage.ReleaseOxygen && inventoryObject.IsDrainHolding(O2Needed))
+            {
+                UpdateStage("Collect 10 CO2");
+            }
+        }
+        if (inv.name == "CO2Sink")
+        {
+            if (_currStage == Stage.ReleaseCarbonDioxide && inventoryObject.IsDrainHolding(CO2Needed))
+            {
+                UpdateStage("Travel to the Lungs to collect O2");
+            }
+        }
+    }
+
 }

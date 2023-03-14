@@ -16,8 +16,8 @@ public class InventoryManager : MonoBehaviour, ITap, IDrain
     public int startingInventorySize = 0;
     public int maxInventorySize;
     public TMP_Text UIElement;
-    public UnityEvent OnNewItemSpawned;
-    public UnityEvent OnNewItemDrained;
+    public UnityGameObjectEvent OnNewItemSpawned;
+    public UnityGameObjectEvent OnNewItemDrained;
 
     private int _count;
 
@@ -32,6 +32,9 @@ public class InventoryManager : MonoBehaviour, ITap, IDrain
 
         if (UIElement != null)
             UIElement.text = inventoryType.name + ": " + _count;
+
+        OnNewItemSpawned.AddListener(GameManager.instance.HandleInventoryUpdate);
+        OnNewItemDrained.AddListener(GameManager.instance.HandleInventoryUpdate);
     }
 
     // Add an invocation to say hey a new thing was spawned from the player's inventory.
@@ -49,7 +52,7 @@ public class InventoryManager : MonoBehaviour, ITap, IDrain
             {
                 _count -= 1;
             }
-            OnNewItemSpawned?.Invoke();
+            OnNewItemSpawned?.Invoke(this.gameObject);
         }
     }
 
@@ -73,14 +76,26 @@ public class InventoryManager : MonoBehaviour, ITap, IDrain
             {
                 _count += 1;
                 Destroy(collision.gameObject);
-                OnNewItemDrained?.Invoke();
+                OnNewItemDrained?.Invoke(this.gameObject);
             }
         }
     }
 
-    public void UpdateUIElement()
+    public void UpdateUIElement(GameObject inv)
     {
         UIElement.text = inventoryType.name + ": " + _count.ToString();    
     }
 
+    public bool IsFull()
+    {
+        return _count == maxInventorySize;
+    }
+
+    public bool IsDrainHolding(int amount)
+    {
+        return _count >= amount;
+    }
+
+    [System.Serializable]
+    public class UnityGameObjectEvent : UnityEvent<GameObject> { };
 }
