@@ -2,12 +2,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Experimental.XR.Interaction;
+using UnityEngine.Events;
+using TMPro;
 
 public class PlayerTeleporter : MonoBehaviour
 {
     public GameObject locationToTeleport;
     public bool goingToLung;
     public bool goingToExt;
+
+    [HideInInspector] public UnityEvent OnEnterLungs;
+    [HideInInspector] public UnityEvent OnEnterExt;
+
+
+    public void Start()
+    {
+
+        OnEnterLungs.AddListener(GameManager.instance.PlayerEnteredLungs);
+        OnEnterExt.AddListener(GameManager.instance.PlayerEnteredExt);
+    }
 
     void OnTriggerEnter()
     {
@@ -16,18 +29,13 @@ public class PlayerTeleporter : MonoBehaviour
 
         if (goingToLung)
         {
-            GameManager.instance._playerInLung = true;
+            OnEnterLungs.Invoke();
+        } else if (goingToExt)
+        {
+            OnEnterExt.Invoke();
         } else
         {
-            GameManager.instance._playerInLung = false;
-        }
-        
-        if (goingToExt)
-        {
-            GameManager.instance._playerInExt = true;
-        } else
-        {
-            GameManager.instance._playerInExt = false;
+            GameManager.instance.ResetTravelState();
         }
 
     }

@@ -29,7 +29,9 @@ public class InventoryManager : MonoBehaviour, ITap, IDrain
             OnNewItemDrained.AddListener(UpdateUIElement);
         }
         _count = startingInventorySize;
-        UIElement.text = inventoryType.name + ": " + _count;
+
+        if (UIElement != null)
+            UIElement.text = inventoryType.name + ": " + _count;
     }
 
     // Add an invocation to say hey a new thing was spawned from the player's inventory.
@@ -43,7 +45,7 @@ public class InventoryManager : MonoBehaviour, ITap, IDrain
             XRInteractionManager XRIM = FindAnyObjectByType<XRInteractionManager>();
             GameObject Interactable = Instantiate(inventoryType);
             XRIM.SelectEnter(args.interactorObject, Interactable.GetComponent<XRGrabInteractable>());
-            if (!isInfiniteTap)
+            if (_count > 0)
             {
                 _count -= 1;
             }
@@ -69,10 +71,7 @@ public class InventoryManager : MonoBehaviour, ITap, IDrain
         {
             if (molecule.wasReleasedByPlayer && (_count < maxInventorySize || isInfiniteDrain))
             {
-                if (!isInfiniteDrain)
-                {
-                    _count += 1;
-                }
+                _count += 1;
                 Destroy(collision.gameObject);
                 OnNewItemDrained?.Invoke();
             }
