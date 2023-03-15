@@ -5,6 +5,8 @@ using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 using UnityEngine.Events;
 using TMPro;
+using UnityEngine.XR.Interaction.Toolkit;
+using UnityEditor;
 
 public class GameManager : MonoBehaviour
 {
@@ -37,6 +39,7 @@ public class GameManager : MonoBehaviour
     private Coroutine _runningCoroutine;
     private float _speed = 3;
     private Stage _currStage;
+    private GameObject _TaskViewer;
     private TMP_Text _TaskText;
 
     private void Awake()
@@ -53,7 +56,8 @@ public class GameManager : MonoBehaviour
         _playerInExt = false;
         _runningCoroutine = null;
         _currStage = 0;
-        _TaskText = GameObject.Find("LeftHand Controller").GetComponentInChildren<TMP_Text>();
+        _TaskViewer = GameObject.Find("LeftHand Controller");
+        _TaskText = _TaskViewer.GetComponentInChildren<TMP_Text>();
         _TaskText.text = "Current Red Blood Cell Task: You are in the heart. Travel to the lungs.";
 
         actions.FindActionMap("XRI LeftHand Interaction").FindAction("Press Primary Button").performed += ctx => { OnPrimaryButtonPress(ctx); };
@@ -79,35 +83,43 @@ public class GameManager : MonoBehaviour
         {
             _currStage = (Stage)((int)_currStage + 1);
         }
-        _TaskText.text = newTaskText;
+        _TaskText.text = "Current Red Blood Cell Task: " + newTaskText;
     }
 
     public void OnPrimaryButtonPress(InputAction.CallbackContext ctx)
     {
-        _TaskText.enabled = !_TaskText.enabled;
+        //_TaskViewer.GetComponent<XRInteractorLineVisual>().enabled = !_TaskViewer.GetComponent<LineRenderer>().enabled; 
+        _TaskViewer.GetComponentInChildren<Canvas>().enabled = !_TaskViewer.GetComponentInChildren<Canvas>().enabled;
     }
 
     // Control over state of player location
-    public void PlayerEnteredLungs()
+    public void HandlePlayerTeleport(PlayerTeleporter.BodyPart part)
     {
-        _runningCoroutine = StartCoroutine(SpawnMolecule(O2, O2SpawnTime, O2SpawnLocations[0]));
-        if (_currStage == Stage.TravelToLungs)
+        if (part == PlayerTeleporter.BodyPart.Heart)
         {
-            // Todo: Change to eventually just be a list of every single stage's task text.
-            UpdateStage("Collect 10 of the oxygen molecules.");
-        } else if (_currStage == Stage.ReturnToLungs) 
+            ResetTravelState();
+        } else if (part == PlayerTeleporter.BodyPart.Lungs)
         {
-            UpdateStage("Release 10 carbon dioxide molecules.");
+            if (_currStage == Stage.TravelToLungs)
+            {
+                // Todo: Change to eventually just be a list of every single stage's task text.
+                _runningCoroutine = StartCoroutine(SpawnMolecule(O2, O2SpawnTime, O2SpawnLocations[0]));
+                UpdateStage("Collect 10 of the oxygen molecules.");
+            }
+            else if (_currStage == Stage.ReturnToLungs)
+            {
+                _runningCoroutine = StartCoroutine(SpawnMolecule(O2, O2SpawnTime, O2SpawnLocations[(int)part - 1]));
+                UpdateStage("Release 10 carbon dioxide molecules.");
+            }
+        } else // This means were going to extremity!
+        {
+            _runningCoroutine = StartCoroutine(SpawnMolecule(CO2, CO2SpawnTime, CO2SpawnLocations[(int)part - 2]));
+            if (_currStage == Stage.TravelToExtremity)
+            {
+                UpdateStage("Release oxygen to keep the extremity alive.");
+            }
         }
-    }
-
-    public void PlayerEnteredExt()
-    {
-        _runningCoroutine = StartCoroutine(SpawnMolecule(CO2, CO2SpawnTime, CO2SpawnLocations[0]));
-        if (_currStage == Stage.TravelToExtremity)
-        {
-            UpdateStage("Release oxygen to keep the extremity alive.");
-        }
+       
     }
 
     public void ResetTravelState()

@@ -7,38 +7,34 @@ using TMPro;
 
 public class PlayerTeleporter : MonoBehaviour
 {
-    public GameObject locationToTeleport;
-    public bool goingToLung;
-    public bool goingToExt;
+    public enum BodyPart
+    {
+        Heart,
+        Lungs,
+        Leg,
+        Arm
+    }
 
-    [HideInInspector] public UnityEvent OnEnterLungs;
-    [HideInInspector] public UnityEvent OnEnterExt;
+    public GameObject locationToTeleport;
+    public BodyPart Destination;
+
+    [HideInInspector] public UnityTeleportEvent OnPlayerTeleport;
 
 
     public void Start()
     {
 
-        OnEnterLungs.AddListener(GameManager.instance.PlayerEnteredLungs);
-        OnEnterExt.AddListener(GameManager.instance.PlayerEnteredExt);
+        OnPlayerTeleport.AddListener(GameManager.instance.HandlePlayerTeleport);
     }
 
     void OnTriggerEnter()
     {
         GameObject player = GameObject.Find("XROrigin");
         player.gameObject.transform.position = locationToTeleport.transform.position;
-
-        if (goingToLung)
-        {
-            OnEnterLungs.Invoke();
-        } else if (goingToExt)
-        {
-            OnEnterExt.Invoke();
-        } else
-        {
-            GameManager.instance.ResetTravelState();
-        }
+        OnPlayerTeleport.Invoke(Destination);
 
     }
 
-
+    [System.Serializable]
+    public class UnityTeleportEvent : UnityEvent<BodyPart> { };
 }

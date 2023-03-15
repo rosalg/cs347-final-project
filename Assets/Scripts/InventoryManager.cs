@@ -19,6 +19,7 @@ public class InventoryManager : MonoBehaviour, ITap, IDrain
     public UnityGameObjectEvent OnNewItemSpawned;
     public UnityGameObjectEvent OnNewItemDrained;
 
+    private XRGrabInteractable _xrgi;
     private int _count;
 
     private void Start()
@@ -29,6 +30,12 @@ public class InventoryManager : MonoBehaviour, ITap, IDrain
             OnNewItemDrained.AddListener(UpdateUIElement);
         }
         _count = startingInventorySize;
+        _xrgi = GetComponent<XRGrabInteractable>();
+
+        if (_count == 0 && _xrgi)
+        {
+            _xrgi.enabled = false;
+        }
 
         if (UIElement != null)
             UIElement.text = inventoryType.name + ": " + _count;
@@ -46,11 +53,15 @@ public class InventoryManager : MonoBehaviour, ITap, IDrain
         if (_count > 0 || isInfiniteTap)
         {
             XRInteractionManager XRIM = FindAnyObjectByType<XRInteractionManager>();
+            XRIM.CancelInteractableSelection(args.interactableObject);
             GameObject Interactable = Instantiate(inventoryType);
             XRIM.SelectEnter(args.interactorObject, Interactable.GetComponent<XRGrabInteractable>());
             if (_count > 0)
             {
                 _count -= 1;
+            } else if (_xrgi)
+            {
+                _xrgi.enabled = false;
             }
             OnNewItemSpawned?.Invoke(this.gameObject);
         }
@@ -58,25 +69,24 @@ public class InventoryManager : MonoBehaviour, ITap, IDrain
 
     public void OnCollisionEnter(Collision collision)
     {
-        DrainItem(collision);
+        DrainItem(collision.gameObject);
     }
 
-
-    // Add an invocation to say hey a new thing was put into the player's inventory.
-    public void DrainItem(Collision collision)
+    public void DrainItem(GameObject collisionObject)
     {
         if (!isDrain)
             return;
 
-
-        Molecule molecule = collision.gameObject.GetComponent<Molecule>();
+        Molecule molecule = collisionObject.GetComponent<Molecule>();
         if (molecule != null && molecule.element == inventoryType.GetComponent<Molecule>().element)
         {
             if (molecule.wasReleasedByPlayer && (_count < maxInventorySize || isInfiniteDrain))
             {
                 _count += 1;
-                Destroy(collision.gameObject);
+                Destroy(collisionObject);
                 OnNewItemDrained?.Invoke(this.gameObject);
+                if (_xrgi)
+                    _xrgi.enabled = true;
             }
         }
     }

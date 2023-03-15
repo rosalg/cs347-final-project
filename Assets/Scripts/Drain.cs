@@ -4,5 +4,5 @@ using UnityEngine;
 
 public interface IDrain
 {
-    public void DrainItem(Collision collision);
+    public void DrainItem(GameObject collisionObject);
 }
