@@ -122,8 +122,10 @@ public class GameManager : MonoBehaviour
         {
             ResetTravelState();
             UpdateMap(heart_map);
+            AudioManager.instance.Play("Heartbeat");
         } else if (part == PlayerTeleporter.BodyPart.Lungs)
         {
+            AudioManager.instance.Stop("Heartbeat");
             _runningCoroutine = StartCoroutine(SpawnMolecule(O2, O2SpawnTime, O2SpawnLocations[0]));
             UpdateMap(lung_map);
             if (_currStage == Stage.TravelToLungs)
@@ -137,6 +139,7 @@ public class GameManager : MonoBehaviour
             }
         } else // This means were going to extremity!
         {
+            AudioManager.instance.Stop("Heartbeat");
             _runningCoroutine = StartCoroutine(SpawnMolecule(CO2, CO2SpawnTime, CO2SpawnLocations[(int)part - 2]));
             if (part == PlayerTeleporter.BodyPart.Leg)
             {
