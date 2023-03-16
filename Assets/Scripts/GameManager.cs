@@ -31,6 +31,11 @@ public class GameManager : MonoBehaviour
     public int O2Needed = 10;
     public int CO2Needed = 10;
 
+    public Sprite heart_map;
+    public Sprite lung_map;
+    public Sprite leg_map;
+    public Sprite arm_map;
+
     [HideInInspector] public bool _playerInLung;
     [HideInInspector] public bool _playerInExt;
 
@@ -41,6 +46,10 @@ public class GameManager : MonoBehaviour
     private Stage _currStage;
     private GameObject _TaskViewer;
     private TMP_Text _TaskText;
+
+    private GameObject _MapViewer;
+    private Image _MapImage;
+
 
     private void Awake()
     {
@@ -60,7 +69,12 @@ public class GameManager : MonoBehaviour
         _TaskText = _TaskViewer.GetComponentInChildren<TMP_Text>();
         _TaskText.text = "Current Red Blood Cell Task: You are in the heart. Travel to the lungs.";
 
+        _MapViewer = GameObject.Find("RightHand Controller");
+        _MapImage = _MapViewer.GetComponentInChildren<Image>();
+        _MapImage.sprite = heart_map;
+
         actions.FindActionMap("XRI LeftHand Interaction").FindAction("Press Primary Button").performed += ctx => { OnPrimaryButtonPress(ctx); };
+        actions.FindActionMap("XRI RightHand Interaction").FindAction("Press Primary Button").performed += ctx => { OnPrimaryButtonRightPress(ctx); };
     }
 
     IEnumerator SpawnMolecule(GameObject moleculeToSpawn, float spawnTime, GameObject spawnPosition)
@@ -86,10 +100,21 @@ public class GameManager : MonoBehaviour
         _TaskText.text = "Current Red Blood Cell Task: " + newTaskText;
     }
 
+    public void UpdateMap(Sprite newMapSprite)
+    {
+        _MapImage.sprite = newMapSprite;
+    }
+
     public void OnPrimaryButtonPress(InputAction.CallbackContext ctx)
     {
         //_TaskViewer.GetComponent<XRInteractorLineVisual>().enabled = !_TaskViewer.GetComponent<LineRenderer>().enabled; 
         _TaskViewer.GetComponentInChildren<Canvas>().enabled = !_TaskViewer.GetComponentInChildren<Canvas>().enabled;
+    }
+
+    public void OnPrimaryButtonRightPress(InputAction.CallbackContext ctx)
+    {
+        //_TaskViewer.GetComponent<XRInteractorLineVisual>().enabled = !_TaskViewer.GetComponent<LineRenderer>().enabled; 
+        _MapViewer.GetComponentInChildren<Canvas>().enabled = !_MapViewer.GetComponentInChildren<Canvas>().enabled;
     }
 
     // Control over state of player location
@@ -98,6 +123,7 @@ public class GameManager : MonoBehaviour
         if (part == PlayerTeleporter.BodyPart.Heart)
         {
             ResetTravelState();
+            UpdateMap(heart_map);
         } else if (part == PlayerTeleporter.BodyPart.Lungs)
         {
             if (_currStage == Stage.TravelToLungs)
@@ -105,11 +131,13 @@ public class GameManager : MonoBehaviour
                 // Todo: Change to eventually just be a list of every single stage's task text.
                 _runningCoroutine = StartCoroutine(SpawnMolecule(O2, O2SpawnTime, O2SpawnLocations[0]));
                 UpdateStage("Collect 10 of the oxygen molecules.");
+                UpdateMap(lung_map);
             }
             else if (_currStage == Stage.ReturnToLungs)
             {
                 _runningCoroutine = StartCoroutine(SpawnMolecule(O2, O2SpawnTime, O2SpawnLocations[(int)part - 1]));
                 UpdateStage("Release 10 carbon dioxide molecules.");
+                UpdateMap(lung_map);
             }
         } else // This means were going to extremity!
         {
@@ -117,6 +145,7 @@ public class GameManager : MonoBehaviour
             if (_currStage == Stage.TravelToExtremity)
             {
                 UpdateStage("Release oxygen to keep the extremity alive.");
+                UpdateMap(leg_map);
             }
         }
        
