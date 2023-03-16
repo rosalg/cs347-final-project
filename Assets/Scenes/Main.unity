@@ -10861,7 +10861,7 @@ MonoBehaviour:
   sounds:
   - clip: {fileID: 8300000, guid: dd24813519dd21c42875d20b1cd18e5f, type: 3}
     name: Heartbeat
-    volume: 1
+    volume: 0.05
     pitch: 2
     source: {fileID: 0}
     loop: 1
