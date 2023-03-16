@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UIElements;
+using UnityEngine.UI;
 using UnityEngine.Events;
 using TMPro;
 using UnityEngine.XR.Interaction.Toolkit;
@@ -67,7 +67,7 @@ public class GameManager : MonoBehaviour
         _currStage = 0;
         _TaskViewer = GameObject.Find("LeftHand Controller");
         _TaskText = _TaskViewer.GetComponentInChildren<TMP_Text>();
-        _TaskText.text = "Current Red Blood Cell Task: You are in the heart. Travel to the lungs.";
+        _TaskText.text = "Current Red Blood Cell Task: Travel to the lungs.";
 
         _MapViewer = GameObject.Find("RightHand Controller");
         _MapImage = _MapViewer.GetComponentInChildren<Image>();
@@ -92,7 +92,7 @@ public class GameManager : MonoBehaviour
     {
         if (_currStage == Stage.ReleaseCarbonDioxide)
         {
-            _currStage = Stage.TravelToLungs;
+            _currStage = Stage.OxygenCollection;
         } else
         {
             _currStage = (Stage)((int)_currStage + 1);
@@ -107,13 +107,11 @@ public class GameManager : MonoBehaviour
 
     public void OnPrimaryButtonPress(InputAction.CallbackContext ctx)
     {
-        //_TaskViewer.GetComponent<XRInteractorLineVisual>().enabled = !_TaskViewer.GetComponent<LineRenderer>().enabled; 
         _TaskViewer.GetComponentInChildren<Canvas>().enabled = !_TaskViewer.GetComponentInChildren<Canvas>().enabled;
     }
 
     public void OnPrimaryButtonRightPress(InputAction.CallbackContext ctx)
     {
-        //_TaskViewer.GetComponent<XRInteractorLineVisual>().enabled = !_TaskViewer.GetComponent<LineRenderer>().enabled; 
         _MapViewer.GetComponentInChildren<Canvas>().enabled = !_MapViewer.GetComponentInChildren<Canvas>().enabled;
     }
 
@@ -126,26 +124,33 @@ public class GameManager : MonoBehaviour
             UpdateMap(heart_map);
         } else if (part == PlayerTeleporter.BodyPart.Lungs)
         {
+            _runningCoroutine = StartCoroutine(SpawnMolecule(O2, O2SpawnTime, O2SpawnLocations[0]));
+            UpdateMap(lung_map);
             if (_currStage == Stage.TravelToLungs)
             {
                 // Todo: Change to eventually just be a list of every single stage's task text.
-                _runningCoroutine = StartCoroutine(SpawnMolecule(O2, O2SpawnTime, O2SpawnLocations[0]));
-                UpdateStage("Collect 10 of the oxygen molecules.");
-                UpdateMap(lung_map);
+                UpdateStage("Collect " + O2Needed.ToString() + " oxygen molecules from the alevoli.");
             }
             else if (_currStage == Stage.ReturnToLungs)
             {
-                _runningCoroutine = StartCoroutine(SpawnMolecule(O2, O2SpawnTime, O2SpawnLocations[(int)part - 1]));
-                UpdateStage("Release 10 carbon dioxide molecules.");
-                UpdateMap(lung_map);
+                UpdateStage("Release " + CO2Needed.ToString() + " carbon dioxide molecules into the alveoli.");
             }
         } else // This means were going to extremity!
         {
             _runningCoroutine = StartCoroutine(SpawnMolecule(CO2, CO2SpawnTime, CO2SpawnLocations[(int)part - 2]));
+            if (part == PlayerTeleporter.BodyPart.Leg)
+            {
+                UpdateMap(leg_map);
+
+            }
+            else if (part == PlayerTeleporter.BodyPart.Arm)
+            {
+                UpdateMap(arm_map);
+
+            }
             if (_currStage == Stage.TravelToExtremity)
             {
-                UpdateStage("Release oxygen to keep the extremity alive.");
-                UpdateMap(leg_map);
+                UpdateStage("Release " + O2Needed + " oxygen to keep the extremity alive.");
             }
         }
        
@@ -162,31 +167,31 @@ public class GameManager : MonoBehaviour
         InventoryManager inventoryObject = inv.GetComponent<InventoryManager>();
         if (inv.name == "O2Inv")
         {
-            if (_currStage == Stage.OxygenCollection && inventoryObject.IsFull())
+            if (_currStage == Stage.OxygenCollection && inventoryObject.IsHolding(O2Needed))
             {
                 UpdateStage("Travel to any extremity");
             }
         }
         if (inv.name == "CO2Inv")
         {
-            if (_currStage == Stage.CollectCarbonDioxide && inventoryObject.IsFull())
+            if (_currStage == Stage.CollectCarbonDioxide && inventoryObject.IsHolding(CO2Needed))
             {
                 UpdateStage("Return to the lungs.");
             }
         }
         if (inv.name == "O2Sink")
         {
-            if (_currStage == Stage.ReleaseOxygen && inventoryObject.IsDrainHolding(O2Needed))
+            if (_currStage == Stage.ReleaseOxygen && inventoryObject.IsHolding(O2Needed))
             {
-                UpdateStage("Collect 10 CO2");
+                UpdateStage("Collect "+ CO2Needed + " CO2");
                 inventoryObject.ResetDrain();
             }
         }
         if (inv.name == "CO2Sink")
         {
-            if (_currStage == Stage.ReleaseCarbonDioxide && inventoryObject.IsDrainHolding(CO2Needed))
+            if (_currStage == Stage.ReleaseCarbonDioxide && inventoryObject.IsHolding(CO2Needed))
             {
-                UpdateStage("Travel to the Lungs to collect O2");
+                UpdateStage("Collect " + O2Needed.ToString() + " oxygen molecules from the alevoli.");
                 inventoryObject.ResetDrain();
             }
         }

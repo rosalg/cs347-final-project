@@ -34,6 +34,7 @@ public class PlayerTeleporter : MonoBehaviour
         {
             GameObject player = GameObject.Find("XROrigin");
             player.gameObject.transform.position = locationToTeleport.transform.position;
+            player.gameObject.transform.rotation = locationToTeleport.transform.rotation;
             OnPlayerTeleport.Invoke(Destination);
         }
     }

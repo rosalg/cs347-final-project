@@ -72,11 +72,15 @@ public class InventoryManager : MonoBehaviour, ITap, IDrain
         DrainItem(collision.gameObject);
     }
 
+    public void OnTriggerEnter(Collider other)
+    {
+        DrainItem(other.gameObject);
+    }
+
     public void DrainItem(GameObject collisionObject)
     {
         if (!isDrain)
             return;
-
         Molecule molecule = collisionObject.GetComponent<Molecule>();
         if (molecule != null && molecule.element == inventoryType.GetComponent<Molecule>().element)
         {
@@ -101,7 +105,7 @@ public class InventoryManager : MonoBehaviour, ITap, IDrain
         return _count == maxInventorySize;
     }
 
-    public bool IsDrainHolding(int amount)
+    public bool IsHolding(int amount)
     {
         return _count >= amount;
     }
