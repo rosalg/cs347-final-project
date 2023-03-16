@@ -150,6 +150,7 @@ public class GameManager : MonoBehaviour
             if (_currStage == Stage.ReleaseOxygen && inventoryObject.IsDrainHolding(O2Needed))
             {
                 UpdateStage("Collect 10 CO2");
+                inventoryObject.ResetDrain();
             }
         }
         if (inv.name == "CO2Sink")
@@ -157,6 +158,7 @@ public class GameManager : MonoBehaviour
             if (_currStage == Stage.ReleaseCarbonDioxide && inventoryObject.IsDrainHolding(CO2Needed))
             {
                 UpdateStage("Travel to the Lungs to collect O2");
+                inventoryObject.ResetDrain();
             }
         }
     }

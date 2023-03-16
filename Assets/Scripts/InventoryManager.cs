@@ -106,6 +106,11 @@ public class InventoryManager : MonoBehaviour, ITap, IDrain
         return _count >= amount;
     }
 
+    public void ResetDrain()
+    {
+        _count = 0;
+    }
+
     [System.Serializable]
     public class UnityGameObjectEvent : UnityEvent<GameObject> { };
 }

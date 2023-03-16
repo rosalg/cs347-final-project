@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Experimental.XR.Interaction;
+using UnityEngine.Experimental.XR;
 using UnityEngine.Events;
 using TMPro;
+using Unity.XR.CoreUtils;
 
 public class PlayerTeleporter : MonoBehaviour
 {
@@ -27,12 +28,14 @@ public class PlayerTeleporter : MonoBehaviour
         OnPlayerTeleport.AddListener(GameManager.instance.HandlePlayerTeleport);
     }
 
-    void OnTriggerEnter()
+    void OnTriggerEnter(Collider collider)
     {
-        GameObject player = GameObject.Find("XROrigin");
-        player.gameObject.transform.position = locationToTeleport.transform.position;
-        OnPlayerTeleport.Invoke(Destination);
-
+        if (collider.GetComponentInParent<XROrigin>())
+        {
+            GameObject player = GameObject.Find("XROrigin");
+            player.gameObject.transform.position = locationToTeleport.transform.position;
+            OnPlayerTeleport.Invoke(Destination);
+        }
     }
 
     [System.Serializable]
